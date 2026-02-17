@@ -1,16 +1,5 @@
 {
   "accounts": [
-    {
-      "id": "1",
-      "name": "321507372",
-      "code": "3f1be2ee846856b5acc512a85b020032",
-      "platform": "qq",
-      "uin": "321507372",
-      "qq": "321507372",
-      "avatar": "https://q1.qlogo.cn/g?b=qq&nk=321507372&s=640",
-      "createdAt": 1771319567074,
-      "updatedAt": 1771319567074
-    }
   ],
   "nextId": 2
 }
