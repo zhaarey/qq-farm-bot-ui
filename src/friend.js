@@ -903,14 +903,14 @@ async function checkFriends() {
 
             // 只加入有预览信息的好友
             if (stealNum > 0 || dryNum > 0 || weedNum > 0 || insectNum > 0) {
-                priorityFriends.push({ gid, name });
+                priorityFriends.push({ gid, name, isPriority: true });
                 visitedGids.add(gid);
                 if (showDebug) {
                     console.log(`[调试] 好友 [${name}] 加入优先列表 (位置: ${priorityFriends.length})`);
                 }
             } else if (autoBadEnabled && canPutBugOrWeed) {
                 // 没有预览信息但可以放虫放草（仅在开启放虫放草功能时）
-                otherFriends.push({ gid, name });
+                otherFriends.push({ gid, name, isPriority: false });
                 visitedGids.add(gid);
             }
         }
@@ -935,8 +935,16 @@ async function checkFriends() {
         }
 
         let totalActions = { steal: 0, water: 0, weed: 0, bug: 0, putBug: 0, putWeed: 0 };
+        let visitedCount = 0;
         for (let i = 0; i < friendsToVisit.length; i++) {
             const friend = friendsToVisit[i];
+            
+            // 如果捣乱次数用完了，且当前好友不是优先访问的（即仅为了捣乱而加入列表的），则停止后续访问
+            if (!friend.isPriority && !canOperate(10004) && !canOperate(10003)) {
+                break;
+            }
+
+            visitedCount++;
             const showDebug = DEBUG_FRIEND_LANDS === true || DEBUG_FRIEND_LANDS === friend.name;
             if (showDebug) {
                 console.log(`[调试] 准备访问 [${friend.name}] (${i + 1}/${friendsToVisit.length})`);
@@ -949,10 +957,6 @@ async function checkFriends() {
                 }
             }
             await sleep(500);
-            // 如果捣乱次数用完了，且没有其他操作，可以提前结束
-            if (!canOperate(10004) && !canOperate(10003)) {  // 10004=放虫, 10003=放草
-                // 继续巡查，但不再放虫放草
-            }
         }
 
         // 自动模式：整轮好友偷取完成后再统一出售一次果实
@@ -980,8 +984,8 @@ async function checkFriends() {
         if (totalActions.putWeed > 0) summary.push(`放草${totalActions.putWeed}`);
         
         if (summary.length > 0) {
-            log('好友', `巡查 ${friendsToVisit.length} 人 → ${summary.join('/')}`, {
-                module: 'friend', event: 'friend_cycle', result: 'ok', visited: friendsToVisit.length, summary
+            log('好友', `巡查 ${visitedCount} 人 → ${summary.join('/')}`, {
+                module: 'friend', event: 'friend_cycle', result: 'ok', visited: visitedCount, summary
             });
         }
         isFirstFriendCheck = false;
