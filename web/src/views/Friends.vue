@@ -245,7 +245,7 @@ function handleFriendAvatarError(friend: any) {
       <div v-if="normalFriends.length > 0">
         <div class="mb-3 flex items-center gap-2">
           <div class="i-carbon-user-favorite text-lg text-green-500" />
-          <h3 class="text-lg font-semibold text-gray-700 dark:text-gray-300">
+          <h3 class="text-lg text-gray-700 font-semibold dark:text-gray-300">
             正常好友
           </h3>
           <span class="rounded-full bg-green-100 px-2 py-0.5 text-xs text-green-600 dark:bg-green-900/30 dark:text-green-400">
@@ -315,7 +315,7 @@ function handleFriendAvatarError(friend: any) {
                   捣乱
                 </button>
                 <button
-                  class="rounded bg-gray-100 px-3 py-2 text-sm text-gray-500 transition hover:bg-gray-200 dark:bg-gray-700/50 dark:text-gray-400 dark:hover:bg-gray-700"
+                  class="rounded bg-gray-100 px-3 py-2 text-sm text-gray-500 transition dark:bg-gray-700/50 hover:bg-gray-200 dark:text-gray-400 dark:hover:bg-gray-700"
                   @click="handleToggleBlacklist(friend, $event)"
                 >
                   加入黑名单
@@ -353,7 +353,7 @@ function handleFriendAvatarError(friend: any) {
             :class="blacklistCollapsed ? 'i-carbon-chevron-right' : 'i-carbon-chevron-down'"
           />
           <div class="i-carbon-user-x text-lg text-gray-400" />
-          <h3 class="text-lg font-semibold text-gray-500 dark:text-gray-400">
+          <h3 class="text-lg text-gray-500 font-semibold dark:text-gray-400">
             黑名单
           </h3>
           <span class="rounded-full bg-gray-200 px-2 py-0.5 text-xs text-gray-500 dark:bg-gray-700 dark:text-gray-400">
@@ -424,7 +424,7 @@ function handleFriendAvatarError(friend: any) {
                   捣乱
                 </button>
                 <button
-                  class="rounded bg-gray-200 px-3 py-2 text-sm text-gray-600 transition hover:bg-gray-300 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600"
+                  class="rounded bg-gray-200 px-3 py-2 text-sm text-gray-600 transition dark:bg-gray-700 hover:bg-gray-300 dark:text-gray-300 dark:hover:bg-gray-600"
                   @click="handleToggleBlacklist(friend, $event)"
                 >
                   移出黑名单
