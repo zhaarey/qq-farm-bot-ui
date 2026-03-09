@@ -6,16 +6,9 @@ on:
       - main
   workflow_dispatch:
 
-env:
-  GHCR_REGISTRY: ghcr.io
-  DOCKER_REGISTRY: docker.io
-  # IMAGE_NAME 使用小写处理，防止 GitHub 用户名包含大写字母导致推送失败
-  IMAGE_NAME: ${{ github.repository }}
-
 jobs:
   build:
     runs-on: ubuntu-latest
-
     permissions:
       contents: read
       packages: write
@@ -27,8 +20,7 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
-      # 生成自定义标签：日期 + Git 短哈希
-      # TZ='Asia/Shanghai' 确保时间符合北京时间
+      # 生成日期-短哈希标签
       - name: Generate Tag
         id: tag
         run: |
@@ -40,11 +32,11 @@ jobs:
       - name: Login to GHCR
         uses: docker/login-action@v3
         with:
-          registry: ${{ env.GHCR_REGISTRY }}
+          registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      # 登录 Docker Hub
+      # 登录 Docker Hub (请确保已在 Settings -> Secrets 中配置)
       - name: Login to Docker Hub
         uses: docker/login-action@v3
         with:
@@ -55,12 +47,14 @@ jobs:
       - name: Build and push
         uses: docker/build-push-action@v6
         with:
+          # 【关键修改 1】上下文依然设为根目录，这样 Docker 能读取到项目所有文件
           context: .
+          # 【关键修改 2】明确指定 core 目录下的 Dockerfile
+          file: ./core/Dockerfile
           push: true
           platforms: linux/amd64
-          # 使用组合标签：日期-短哈希
           tags: |
-            ghcr.io/${{ env.IMAGE_NAME }}:latest
-            ghcr.io/${{ env.IMAGE_NAME }}:${{ steps.tag.outputs.datetime }}-${{ steps.tag.outputs.sha_short }}
-            docker.io/${{ env.IMAGE_NAME }}:latest
-            docker.io/${{ env.IMAGE_NAME }}:${{ steps.tag.outputs.datetime }}-${{ steps.tag.outputs.sha_short }}
+            ghcr.io/${{ github.repository }}:latest
+            ghcr.io/${{ github.repository }}:${{ steps.tag.outputs.datetime }}-${{ steps.tag.outputs.sha_short }}
+            docker.io/${{ secrets.DOCKER_USERNAME }}/${{ github.event.repository.name }}:latest
+            docker.io/${{ secrets.DOCKER_USERNAME }}/${{ github.event.repository.name }}:${{ steps.tag.outputs.datetime }}-${{ steps.tag.outputs.sha_short }}
